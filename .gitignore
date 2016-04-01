@@ -1,0 +1,7 @@
+terraform.tfstate*
+terraform.tfvars
+.terraform
+*.swp*
+.chef
+.compliance
+logfiles
