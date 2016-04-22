@@ -79,6 +79,7 @@ resource "template_file" "attributes-json" {
   template = "${file("${path.module}/files/attributes-json.tpl")}"
   vars {
     cert      = "/var/opt/chef-compliance/ssl/${var.hostname}.${var.domain}.crt"
+    cert_key  = "/var/opt/chef-compliance/ssl/${var.hostname}.${var.domain}.key"
     domain    = "${var.domain}"
     host      = "${var.hostname}"
   }
