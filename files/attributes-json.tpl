@@ -1,8 +1,9 @@
 {
   "fqdn": "${host}.${domain}",
   "chef-compliance": {
-    "compliance_fqdn": "${host}.${domain}",
+    "accept_license": true,
     "configuration": {
+      "compliance_fqdn": "${host}.${domain}",
       "ssl": {
         "certificate": "${cert}",
         "certificate_key": "${cert_key}"
