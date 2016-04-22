@@ -115,8 +115,12 @@ variable "chef_org" {
 variable "chef_org_validator" {
   descirption = "Path to validation pem for ${var.chef_org}"
 }
-variable "chef_sg" {
-  description = "Chef Server security group id"
+#variable "chef_sg" {
+#  description = "Chef Server security group id"
+#}
+variable "client_version" {
+  description = "Version of the chef-client software to install"
+  default     = "12.8.1"
 }
 variable "domain" {
   description = "Server domain name"
@@ -130,21 +134,17 @@ variable "knife_rb" {
   description = "Path to your knife.rb configuration"
   default     = ".chef/knife.rb"
 }
-variable "r53" {
-  description = "Use Route53"
-  default     = 0
+variable "log_to_file" {
+  description = "Output chef-client runtime to logfiles/"
+  default     = true
 }
-variable "r53_ttl" {
-  description = "Route53 A record TTL (Default: 180)"
-  default     = 180
+variable "public_ip" {
+  description = "Associate a public IP to the instance"
+  default     = true
 }
-variable "r53_zone_id" {
-  description = "Route53 zone id for public DNS"
-  default     = 0
-}
-variable "r53_zone_internal_id" {
-  description = "Route53 zone id for internal DNS"
-  default     = 0
+variable "root_delete_termination" {
+  description = "Delete server root block device on termination"
+  default     = true
 }
 variable "server_count" {
   description = "Number of servers to provision. DO NOT CHANGE!"
@@ -159,5 +159,9 @@ variable "ssl_key" {
 variable "tag_description" {
   description = "Server AWS description tag text"
   default     = "Created using Terraform (tf_chef_compliance)"
+}
+variable "wait_on" {
+  description = "Variable to hold outputs of other moudles to force waiting"
+  default     = "Nothing"
 }
 
