@@ -94,7 +94,7 @@ resource "null_resource" "compliance-prep" {
     host        = "${var.chef_fqdn}"
   }
   # Push in some cookbooks
-  provisioner "local-exec" {
+  provisioner "remote-exec" {
     script = "${path.module}/files/chef-cookbooks.sh"
   }
   provisioner "remote-exec" {
