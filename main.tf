@@ -66,15 +66,6 @@ provider "aws" {
   secret_key  = "${var.aws_secret_key}"
   region      = "${var.aws_region}"
 }
-#
-# Wait on
-#
-resource "null_resource" "wait_on" {
-  provisioner "local-exec" {
-    command = "echo Waited on ${var.wait_on} before proceeding"
-  }
-}
-# Hack chef-server's attributes to support an compliance server
 resource "template_file" "attributes-json" {
   template = "${file("${path.module}/files/attributes-json.tpl")}"
   vars {
@@ -85,10 +76,39 @@ resource "template_file" "attributes-json" {
   }
 }
 #
+# Wait on
+#
+resource "null_resource" "wait_on" {
+  provisioner "local-exec" {
+    command = "echo Waited on ${var.wait_on} before proceeding"
+  }
+}
+#
+# Prep
+#
+resource "null_resource" "compliance-prep" {
+  depends_on = ["null_resource.wait_on"]
+  connection {
+    user        = "${lookup(var.ami_usermap, var.ami_os)}"
+    private_key = "${var.aws_private_key_file}"
+    host        = "${var.chef_fqdn}"
+  }
+  # Push in some cookbooks
+  provisioner "local-exec" {
+    script = "${path.module}/files/chef-cookbooks.sh"
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo knife cookbook upload -a -c ${var.knife_rb} --force --cookbook-path /var/chef/cookbooks",
+      "sudo rm -rf /var/chef/cookbooks",
+    ]
+  }
+}
+#
 # Compliance
 #
 resource "aws_instance" "chef-compliance" {
-  depends_on    = ["null_resource.wait_on"]
+  depends_on    = ["null_resource.compliance-prep","null_resource.wait_on"]
   ami           = "${lookup(var.ami_map, "${var.ami_os}-${var.aws_region}")}"
   count         = "${var.server_count}"
   instance_type = "${var.aws_flavor}"

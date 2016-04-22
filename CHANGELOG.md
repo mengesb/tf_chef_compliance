@@ -3,6 +3,11 @@ tf_chef_compliance CHANGELOG
 
 This file is used to list changes made in each version of the tf_chef_compliance Terraform plan.
 
+v0.0.4 (2016-04-22)
+-------------------
+- [Brian Menges] - Add [chef-cookbooks.sh](files/chef-cookbooks.sh) script
+- [Brian Menges] - Add `compliance_prep` resource to upload required cookbooks
+
 v0.0.3 (2016-04-22)
 -------------------
 - [Brian Menges] - Fixed missing `cert_key` variable in template call
