@@ -1,7 +1,6 @@
 {
   "fqdn": "${host}.${domain}",
   "chef-compliance": {
-    "accept_license": true,
     "configuration": {
       "compliance_fqdn": "${host}.${domain}",
       "ssl": {
@@ -9,6 +8,9 @@
         "certificate_key": "${cert_key}"
       }
     }
+  },
+  "chef-ingredient": {
+    "accept_license: true
   },
   "firewall": {
     "allow_established": true,
