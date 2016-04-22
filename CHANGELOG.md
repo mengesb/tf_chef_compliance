@@ -3,6 +3,10 @@ tf_chef_compliance CHANGELOG
 
 This file is used to list changes made in each version of the tf_chef_compliance Terraform plan.
 
+v0.0.3 (2016-04-22)
+-------------------
+- [Brian Menges] - Fixed missing `cert_key` variable in template call
+
 v0.0.2 (2016-04-22)
 -------------------
 - [Brian Menges] - Remove Route53
