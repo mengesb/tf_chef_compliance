@@ -34,24 +34,24 @@ resource "aws_security_group_rule" "chef-compliance_allow_443_tcp_all" {
   cidr_blocks = ["0.0.0.0/0"]
   security_group_id = "${aws_security_group.chef-compliance.id}"
 }
-# Chef Server -> Compliance
-resource "aws_security_group_rule" "chef-compliance_allow_all_chef-server" {
-  type        = "ingress"
-  from_port   = 0
-  to_port     = 0
-  protocol    = "-1"
-  source_security_group_id = "${var.chef_sg}"
-  security_group_id = "${aws_security_group.chef-compliance.id}"
-}
-# Compliance -> Chef Server
-resource "aws_security_group_rule" "chef-server_allow_all_chef-compliance" {
-  type        = "ingress"
-  from_port   = 0
-  to_port     = 0
-  protocol    = "-1"
-  source_security_group_id = "${aws_security_group.chef-compliance.id}"
-  security_group_id = "${var.chef_sg}"
-}
+## Chef Server -> Compliance
+#resource "aws_security_group_rule" "chef-compliance_allow_all_chef-server" {
+#  type        = "ingress"
+#  from_port   = 0
+#  to_port     = 0
+#  protocol    = "-1"
+#  source_security_group_id = "${var.chef_sg}"
+#  security_group_id = "${aws_security_group.chef-compliance.id}"
+#}
+## Compliance -> Chef Server
+#resource "aws_security_group_rule" "chef-server_allow_all_chef-compliance" {
+#  type        = "ingress"
+#  from_port   = 0
+#  to_port     = 0
+#  protocol    = "-1"
+#  source_security_group_id = "${aws_security_group.chef-compliance.id}"
+#  security_group_id = "${var.chef_sg}"
+#}
 # Egress: ALL
 resource "aws_security_group_rule" "chef-compliance_allow_all" {
   type        = "egress"
@@ -61,6 +61,19 @@ resource "aws_security_group_rule" "chef-compliance_allow_all" {
   cidr_blocks = ["0.0.0.0/0"]
   security_group_id = "${aws_security_group.chef-compliance.id}"
 }
+provider "aws" {
+  access_key  = "${var.aws_access_key}"
+  secret_key  = "${var.aws_secret_key}"
+  region      = "${var.aws_region}"
+}
+#
+# Wait on
+#
+resource "null_resource" "wait_on" {
+  provisioner "local-exec" {
+    command = "echo Waited on ${var.wait_on} before proceeding"
+  }
+}
 # Hack chef-server's attributes to support an compliance server
 resource "template_file" "attributes-json" {
   template = "${file("${path.module}/files/attributes-json.tpl")}"
@@ -68,14 +81,17 @@ resource "template_file" "attributes-json" {
     cert      = "/var/opt/chef-compliance/ssl/${var.hostname}.${var.domain}.crt"
     domain    = "${var.domain}"
     host      = "${var.hostname}"
+  }
 }
 #
 # Compliance
 #
 resource "aws_instance" "chef-compliance" {
-  ami           = "${lookup(var.ami_map, format("%s-%s", var.ami_os, var.aws_region))}"
+  depends_on    = ["null_resource.wait_on"]
+  ami           = "${lookup(var.ami_map, "${var.ami_os}-${var.aws_region}")}"
   count         = "${var.server_count}"
   instance_type = "${var.aws_flavor}"
+  associate_public_ip_address = "${var.public_ip}"
   subnet_id     = "${var.aws_subnet_id}"
   vpc_security_group_ids = ["${aws_security_group.chef-compliance.id}"]
   key_name      = "${var.aws_key_name}"
@@ -84,7 +100,7 @@ resource "aws_instance" "chef-compliance" {
     Description = "${var.tag_description}"
   }
   root_block_device = {
-    delete_on_termination = true
+    delete_on_termination = "${var.root_delete_termination}"
   }
   connection {
     user        = "${lookup(var.ami_usermap, var.ami_os)}"
@@ -112,10 +128,6 @@ resource "aws_instance" "chef-compliance" {
       "sudo mkdir -p /etc/chef-compliance /var/opt/chef-compliance/ssl",
     ]
   }
-#  provisioner "file" {
-#    source      = "${path.module}/.compliance/actions-source.json"
-#    destination = ".compliance/actions-source.json"
-#  }
   provisioner "file" {
     source      = "${var.ssl_cert}"
     destination = ".compliance/${var.hostname}.${var.domain}.crt"
@@ -142,29 +154,13 @@ resource "aws_instance" "chef-compliance" {
   provisioner "chef" {
     attributes_json = "${template_file.attributes-json.rendered}"
     environment     = "_default"
-    run_list        = ["recipe[system::default]","recipe[chef-compliance::default]"]
+    log_to_file     = "${var.log_to_file}"
     node_name       = "${aws_instance.chef-compliance.tags.Name}"
+    run_list        = ["recipe[system::default]","recipe[chef-client::default]","recipe[chef-client::config]","recipe[chef-client::cron]","recipe[chef-client::delete_validation]","recipe[chef-compliance::default]"]
     server_url      = "https://${var.chef_fqdn}/organizations/${var.chef_org}"
     validation_client_name = "${var.chef_org}-validator"
     validation_key  = "${file("${var.chef_org_validator}")}"
+    version         = "${var.client_version}"
   }
-}
-# Public Route53 DNS record
-resource "aws_route53_record" "chef-compliance" {
-  count    = "${var.r53}"
-  zone_id  = "${var.r53_zone_id}"
-  name     = "${aws_instance.chef-compliance.tags.Name}"
-  type     = "A"
-  ttl      = "${var.r53_ttl}"
-  records  = ["${aws_instance.chef-compliance.public_ip}"]
-}
-# Private Route53 DNS record
-resource "aws_route53_record" "chef-compliance-private" {
-  count    = "${var.r53}"
-  zone_id  = "${var.r53_zone_internal_id}"
-  name     = "${aws_instance.chef-compliance.tags.Name}"
-  type     = "A"
-  ttl      = "${var.r53_ttl}"
-  records  = ["${aws_instance.chef-compliance.private_ip}"]
 }
 
