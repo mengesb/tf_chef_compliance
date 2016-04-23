@@ -3,7 +3,7 @@ tf_chef_compliance CHANGELOG
 
 This file is used to list changes made in each version of the tf_chef_compliance Terraform plan.
 
-v0.0.6 (2016-04-22)
+v0.0.7 (2016-04-22)
 -------------------
 - [Brian Menges] - Removed `accept_license` in `attribtes-json.tpl`
 - [Brian Menges] - Accepting the licence via different means
