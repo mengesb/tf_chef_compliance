@@ -9,9 +9,6 @@
       }
     }
   },
-  "chef-ingredient": {
-    "accept_license": true
-  },
   "firewall": {
     "allow_established": true,
     "allow_ssh": true
