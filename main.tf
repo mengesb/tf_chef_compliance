@@ -34,24 +34,6 @@ resource "aws_security_group_rule" "chef-compliance_allow_443_tcp_all" {
   cidr_blocks = ["0.0.0.0/0"]
   security_group_id = "${aws_security_group.chef-compliance.id}"
 }
-## Chef Server -> Compliance
-#resource "aws_security_group_rule" "chef-compliance_allow_all_chef-server" {
-#  type        = "ingress"
-#  from_port   = 0
-#  to_port     = 0
-#  protocol    = "-1"
-#  source_security_group_id = "${var.chef_sg}"
-#  security_group_id = "${aws_security_group.chef-compliance.id}"
-#}
-## Compliance -> Chef Server
-#resource "aws_security_group_rule" "chef-server_allow_all_chef-compliance" {
-#  type        = "ingress"
-#  from_port   = 0
-#  to_port     = 0
-#  protocol    = "-1"
-#  source_security_group_id = "${aws_security_group.chef-compliance.id}"
-#  security_group_id = "${var.chef_sg}"
-#}
 # Egress: ALL
 resource "aws_security_group_rule" "chef-compliance_allow_all" {
   type        = "egress"
@@ -61,11 +43,15 @@ resource "aws_security_group_rule" "chef-compliance_allow_all" {
   cidr_blocks = ["0.0.0.0/0"]
   security_group_id = "${aws_security_group.chef-compliance.id}"
 }
+# AWS settings
 provider "aws" {
   access_key  = "${var.aws_access_key}"
   secret_key  = "${var.aws_secret_key}"
   region      = "${var.aws_region}"
 }
+#
+# Provisioning template
+#
 resource "template_file" "attributes-json" {
   template = "${file("${path.module}/files/attributes-json.tpl")}"
   vars {
@@ -105,7 +91,7 @@ resource "null_resource" "compliance-prep" {
   }
 }
 #
-# Compliance
+# Provision server
 #
 resource "aws_instance" "chef-compliance" {
   depends_on    = ["null_resource.compliance-prep","null_resource.wait_on"]
@@ -128,6 +114,7 @@ resource "aws_instance" "chef-compliance" {
     private_key = "${var.aws_private_key_file}"
     host        = "${self.public_ip}"
   }
+  # Clean up any potential node/client conflicts
   provisioner "local-exec" {
     command = "knife node-delete   ${var.hostname}.${var.domain} -y -c ${var.knife_rb} ; echo OK"
   }
@@ -143,12 +130,14 @@ resource "aws_instance" "chef-compliance" {
       "echo Say WHAT one more time"
     ]
   }
+  # Prepare some directories to stage files
   provisioner "remote-exec" {
     inline = [
       "mkdir -p .compliance",
       "sudo mkdir -p /etc/chef-compliance /var/opt/chef-compliance/ssl",
     ]
   }
+  # Transfer in required files
   provisioner "file" {
     source      = "${var.ssl_cert}"
     destination = ".compliance/${var.hostname}.${var.domain}.crt"
@@ -157,14 +146,7 @@ resource "aws_instance" "chef-compliance" {
     source      = "${var.ssl_key}"
     destination = ".compliance/${var.hostname}.${var.domain}.key"
   }
-  provisioner "remote-exec" {
-    inline = [
-      "cat > attributes.json <<EOF",
-      "${template_file.attributes-json.rendered}",
-      "EOF",
-      ""
-    ]
-  }
+  # Move files to final location
   provisioner "remote-exec" {
     inline = [
       "sudo mv .compliance/${var.hostname}.${var.domain}.* /var/opt/chef-compliance/ssl",
@@ -173,11 +155,11 @@ resource "aws_instance" "chef-compliance" {
   }
 	# Accept license
   provisioner "remote-exec" {
+    count = "${lookup(var.boolean, var.accept_license)}"
     inline = [
       "sudo touch /var/opt/chef-compliance/.license.accepted"
     ]
   }
-
   # Provision with Chef
   provisioner "chef" {
     attributes_json = "${template_file.attributes-json.rendered}"
