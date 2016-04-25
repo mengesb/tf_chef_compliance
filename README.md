@@ -48,7 +48,7 @@ Create a local `terraform.tfvars` and populate with override values for variable
 
 ### tf_chef_compliance variables
 
-* `accept_license`: Set to `true` to accept the [Chef MLSA License Agreement](https://downloads.chef.io/compliance/1.1.9/ubuntu/14.04/license.html). Default `false`
+* `accept_license`: Set to `1` to accept the [Chef MLSA License Agreement](https://downloads.chef.io/compliance/1.1.9/ubuntu/14.04/license.html). Default `0`
 * `allowed_cidrs`: The comma seperated list of addresses in CIDR format to allow SSH access. Default: `0.0.0.0/0`
 * `chef_fqdn`: DNS address of the Chef Server
 * `chef_org`: Chef organization to join to

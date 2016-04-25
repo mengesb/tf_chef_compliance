@@ -155,7 +155,7 @@ resource "aws_instance" "chef-compliance" {
   }
 	# Accept license
   provisioner "remote-exec" {
-    count = "${lookup(var.boolean, var.accept_license)}"
+    count = "${var.accept_license}"
     inline = [
       "sudo touch /var/opt/chef-compliance/.license.accepted"
     ]
