@@ -100,21 +100,11 @@ variable "ami_usermap" {
   }
 }
 #
-# Other map variables
-#
-variable "boolean" {
-  description = "Map true/false to 1/0 (respectively)"
-  default     = {
-    "true"    = 1
-    "false"   = 0
-  }
-}
-#
 # specific configs
 #
 variable "accept_license" {
   description = "Accept the Chef Compliance license agreement: https://downloads.chef.io/compliance/1.1.9/ubuntu/14.04/license.html"
-  default     = false
+  default     = 0
 }
 variable "allowed_cidrs" {
   description = "List of CIDRs to allow SSH from (CSV list allowed)"

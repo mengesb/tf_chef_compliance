@@ -5,6 +5,11 @@ This file is used to list changes made in each version of the tf_chef_compliance
 
 v0.1.0 (2016-04-25)
 -------------------
+- [Brian Menges] - Remove `boolean` map
+- [Brian Menges] - Update `accept_license`. true = `1`, false = `0`
+
+v0.1.0 (2016-04-25)
+-------------------
 - [Brian Menges] - Add variable `accept_license` and map `boolean`
 - [Brian Menges] - `accept_license` defaults to `false` forcing explicit acceptance
 - [Brian Menges] - Update some comments in plan
