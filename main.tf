@@ -79,6 +79,13 @@ resource "null_resource" "compliance-prep" {
     private_key = "${var.aws_private_key_file}"
     host        = "${var.chef_fqdn}"
   }
+  # Check if we're accepting the license
+  provisioner "local-exec" {
+    command = <<-EOC
+      [ ${var.accept_license} -eq 1 ] && echo 'Chef MLSA License ACCEPTED' || echo 'Chef MLSA License NOT ACCEPTED'
+      [ ${var.accept_license} -eq 1 ] && exit 0 || exit 1
+      EOC
+  }
   # Push in some cookbooks
   provisioner "remote-exec" {
     script = "${path.module}/files/chef-cookbooks.sh"
@@ -155,7 +162,6 @@ resource "aws_instance" "chef-compliance" {
   }
 	# Accept license
   provisioner "remote-exec" {
-    count = "${var.accept_license}"
     inline = [
       "sudo touch /var/opt/chef-compliance/.license.accepted"
     ]
