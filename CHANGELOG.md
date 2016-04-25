@@ -3,7 +3,12 @@ tf_chef_compliance CHANGELOG
 
 This file is used to list changes made in each version of the tf_chef_compliance Terraform plan.
 
-v0.1.0 (2016-04-25)
+v0.1.2 (2016-04-25)
+-------------------
+- [Brian Menges] - Fix count on provisioner
+- [Brian Menges] - Implement break on license not accepted in `null_resource.compliance-prep`
+
+v0.1.1 (2016-04-25)
 -------------------
 - [Brian Menges] - Remove `boolean` map
 - [Brian Menges] - Update `accept_license`. true = `1`, false = `0`
