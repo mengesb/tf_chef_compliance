@@ -48,22 +48,22 @@ Create a local `terraform.tfvars` and populate with override values for variable
 
 ### tf_chef_compliance variables
 
+* `accept_license`: Set to `true` to accept the [Chef MLSA License Agreement](https://downloads.chef.io/compliance/1.1.9/ubuntu/14.04/license.html). Default `false`
 * `allowed_cidrs`: The comma seperated list of addresses in CIDR format to allow SSH access. Default: `0.0.0.0/0`
 * `chef_fqdn`: DNS address of the Chef Server
 * `chef_org`: Chef organization to join to
 * `chef_org_validator`: Path to validation PEM file for your chef organization
-* `chef_sg`: Chef server security group
 * `domain`: Server's basename. Default: `localdomain`
 * `hostname`: Server's basename. Default: `compliance`
 * `knife_rb`: Path to your `knife.rb` configuration file
-* `r53`: Boolean determines if Route53 will be used or not. Default: `0`
-* `r53_ttl`: Time to Live (TTL) setting for Route53 A record to be created. Default: `180`
-* `r53_zone_id`: AWS Route53 Zone ID to add an A record for the server
-* `r53_zone_internal_id`: AWS Route53 Internal Zone ID to add an A record for the server
+* `log_to_file`: Log chef-client to file. Default: `true`
+* `public_ip`: Associate public IP to instance. Default `true`
+* `root_delete_termination`: Delete root device on VM termination. Default: `true`
 * `server_count`: Server count. Default: `1`; DO NOT CHANGE!
 * `ssl_cert`: Server SSL certificate in PEM format
 * `ssl_key`: Server SSL certificate key
 * `tag_description`: Text field tag 'Description'
+* `wait_on`: Method for passing in dependencies through modules to control workflow
 
 ### Map variables
 

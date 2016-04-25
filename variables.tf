@@ -100,8 +100,22 @@ variable "ami_usermap" {
   }
 }
 #
+# Other map variables
+#
+variable "boolean" {
+  description = "Map true/false to 1/0 (respectively)"
+  default     = {
+    "true"    = 1
+    "false"   = 0
+  }
+}
+#
 # specific configs
 #
+variable "accept_license" {
+  description = "Accept the Chef Compliance license agreement: https://downloads.chef.io/compliance/1.1.9/ubuntu/14.04/license.html"
+  default     = false
+}
 variable "allowed_cidrs" {
   description = "List of CIDRs to allow SSH from (CSV list allowed)"
   default     = "0.0.0.0/0"
@@ -115,9 +129,6 @@ variable "chef_org" {
 variable "chef_org_validator" {
   descirption = "Path to validation pem for ${var.chef_org}"
 }
-#variable "chef_sg" {
-#  description = "Chef Server security group id"
-#}
 variable "client_version" {
   description = "Version of the chef-client software to install"
   default     = "12.8.1"

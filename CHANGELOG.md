@@ -3,6 +3,15 @@ tf_chef_compliance CHANGELOG
 
 This file is used to list changes made in each version of the tf_chef_compliance Terraform plan.
 
+v0.1.0 (2016-04-25)
+-------------------
+- [Brian Menges] - Add variable `accept_license` and map `boolean`
+- [Brian Menges] - `accept_license` defaults to `false` forcing explicit acceptance
+- [Brian Menges] - Update some comments in plan
+- [Brian Menges] - Remove unnecessary template write
+- [Brian Menges] - Remove unnecessary global Chef Server <-> Compliance SG allow
+- [Brian Menges] - Documentation updates
+
 v0.0.7 (2016-04-22)
 -------------------
 - [Brian Menges] - Removed `accept_license` in `attribtes-json.tpl`
