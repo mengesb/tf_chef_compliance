@@ -42,6 +42,10 @@ Familiarize yourself with Terraform and be well versed in its interpolations.
 
 - [Terraform](https://www.terraform.io/docs/index.html)
 
+Familiarize youself with Chef Compliance
+
+- [Chef Compliance](https://www.chef.io/compliance/)
+
 Process
 -------
 1. Fork the git repository from GitHub:
