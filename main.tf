@@ -154,12 +154,6 @@ resource "aws_instance" "chef-compliance" {
       "sudo chown -R root:root /etc/chef-compliance /var/opt/chef-compliance/ssl",
     ]
   }
-	# Accept license
-  provisioner "remote-exec" {
-    inline = [
-      "sudo touch /var/opt/chef-compliance/.license.accepted"
-    ]
-  }
   # Provision with Chef
   provisioner "chef" {
     attributes_json = "${template_file.attributes-json.rendered}"

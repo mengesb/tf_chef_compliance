@@ -3,6 +3,11 @@ tf_chef_compliance CHANGELOG
 
 This file is used to list changes made in each version of the tf_chef_compliance Terraform plan.
 
+v0.1.5 (2016-05-25)
+-------------------
+- [Brian Menges] - Correct `accept_license` in [attributes-json.tpl](files/attributes-json.tpl)
+- [Brian Menges] - Remove legacy `touch .license.accepted` remote-exec
+
 v0.1.4 (2016-05-25)
 -------------------
 - [Brian Menges] - Correct [CHANGELOG.md](CHANGELOG.md)
