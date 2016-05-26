@@ -3,6 +3,10 @@ tf_chef_compliance CHANGELOG
 
 This file is used to list changes made in each version of the tf_chef_compliance Terraform plan.
 
+v0.1.6 (2016-05-25)
+-------------------
+- [Brian Menges] - Add `audit` cookbook to [chef-cookbooks.sh](files/chef-cookbooks.sh)
+
 v0.1.5 (2016-05-25)
 -------------------
 - [Brian Menges] - Correct `accept_license` in [attributes-json.tpl](files/attributes-json.tpl)
