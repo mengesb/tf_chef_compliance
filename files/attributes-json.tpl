@@ -1,6 +1,7 @@
 {
   "fqdn": "${host}.${domain}",
   "chef-compliance": {
+    "accept_license": "${license}",
     "configuration": {
       "compliance_fqdn": "${host}.${domain}",
       "ssl": {

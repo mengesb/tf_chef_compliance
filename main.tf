@@ -59,6 +59,7 @@ resource "template_file" "attributes-json" {
     cert_key  = "/var/opt/chef-compliance/ssl/${var.hostname}.${var.domain}.key"
     domain    = "${var.domain}"
     host      = "${var.hostname}"
+    license   = "${var.accept_license}"
   }
 }
 #
@@ -78,13 +79,6 @@ resource "null_resource" "compliance-prep" {
     user        = "${lookup(var.ami_usermap, var.ami_os)}"
     private_key = "${var.aws_private_key_file}"
     host        = "${var.chef_fqdn}"
-  }
-  # Check if we're accepting the license
-  provisioner "local-exec" {
-    command = <<-EOC
-      [ ${var.accept_license} -eq 1 ] && echo 'Chef MLSA License ACCEPTED' || echo 'Chef MLSA License NOT ACCEPTED'
-      [ ${var.accept_license} -eq 1 ] && exit 0 || exit 1
-      EOC
   }
   # Push in some cookbooks
   provisioner "remote-exec" {

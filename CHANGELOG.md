@@ -3,7 +3,13 @@ tf_chef_compliance CHANGELOG
 
 This file is used to list changes made in each version of the tf_chef_compliance Terraform plan.
 
-v0.1.3 (2016-04-25)
+v0.1.4 (2016-05-25)
+-------------------
+- [Brian Menges] - Correct [CHANGELOG.md](CHANGELOG.md)
+- [Brian Menges] - Update `accept_license` variable type, handling and documentation
+- [Brian Menges] - Add `"accept_license": "${license}",` to [attributes-json.tpl](files/attributes-json.tpl)
+
+v0.1.3 (2016-05-25)
 -------------------
 - [Brian Menges] - Spruce up [CONTRIBUTING.md](CONTRIBUTING.md)
 
